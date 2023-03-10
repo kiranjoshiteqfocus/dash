@@ -18,6 +18,30 @@ app.get('/projectcards', async (req, res) => {
     return res.json(data);
 })
 
+app.post('/registration', async (req, res) => {
+    const dash = database.collection('users');
+
+    const query = {email: req.body.email};
+    const result = await dash.findOne(query);
+    
+    if(result){return res.json("User exist, try with another email.")}
+    
+    const document = {username:req.body.username, email:req.body.email, password:req.body.password};
+    const data = await dash.insertOne(document);
+    return res.json("Success");
+})
+
+app.post('/login', async (req, res) => {
+    const dash = database.collection('users');
+
+    const query = {email: req.body.email, password: req.body.password};
+    const result = await dash.findOne(query);
+    
+    if(result){return res.json({status:true, username:result.username, email:result.email})}
+    
+    return res.json({status:false, message:"Login failed"});
+})
+
 app.listen(8800, async ()=>{
     console.log("backend connected")
 })
