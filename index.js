@@ -42,6 +42,10 @@ app.post('/login', async (req, res) => {
     return res.json({status:false, message:"Login failed"});
 })
 
+app.get("/test", (req, res) => {
+    res.json("success");
+})
+
 app.listen(8800, async ()=>{
     console.log("backend connected")
 })
