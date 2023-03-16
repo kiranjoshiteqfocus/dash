@@ -15,7 +15,7 @@ let refreshTokens = [];
 
 const generateAccessToken = (user) => {
     return jwt.sign({ email: user.email, isAdmin: user.isAdmin }, "mySecretKey", {
-      expiresIn: "5m",
+      expiresIn: "120m",
     });
   };
   
@@ -83,11 +83,11 @@ app.post('/registration', async (req, res) => {
     const query = {email: req.body.email};
     const result = await dash.findOne(query);
     
-    if(result){return res.json("User exist, try with another email.")}
+    if(result){return res.json({status:500,message:"User exist, try with another email."})}
     
-    const document = {username:req.body.username, email:req.body.email, password:req.body.password};
+    const document = {username:req.body.username, email:req.body.email, password:req.body.password, isAdmin:false};
     const data = await dash.insertOne(document);
-    return res.json("Success");
+    return res.json({status:200,message:"Success"});
 })
 
 app.post('/login', async (req, res) => {
@@ -103,6 +103,7 @@ app.post('/login', async (req, res) => {
         const refreshToken = generateRefreshToken(user);
         refreshTokens.push(refreshToken);
         res.json({
+        status:200,
         username: user.username,
         email: user.email,
         isAdmin: user.isAdmin,
@@ -111,7 +112,7 @@ app.post('/login', async (req, res) => {
         });
     }
     
-    return res.json({status:false, message:"Login failed"});
+    return res.json({status:403, message:"Login failed"});
 })
 
 
